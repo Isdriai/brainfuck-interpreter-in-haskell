@@ -33,24 +33,25 @@ action saut instB mem =
 	else
 		case right instB of '>':_ -> lecture (deplacement_droite mem)
 			              '<':_ -> lecture (deplacement_gauche mem)
-			              '+':_ -> lecture (update mem ((elt mem)+1))
-			              '-':_ -> lecture (update mem ((elt mem)-1))
+			              '+':_ -> lecture (update mem ((valmem)+1))
+			              '-':_ -> lecture (update mem ((valmem)-1))
 			              '.':_ -> do putStrLn (show head (right mem))
 			              		   lecture mem
 			              ',':_ -> do arg <- getLine
 			              		   lecture (update mem (read arg :: Int))
-			              '[':_ -> if elt mem = 0 
+			              '[':_ -> if valmem mem = 0 
 			              				then action 1 (deplacement_droite instB) mem 
 			              				else lecture mem
-			              ']':_ -> if elt mem =0 
+			              ']':_ -> if valmem mem =0 
 			              				then action (-1) (deplacement_gauche instB) mem 
 			              				else lecture mem
 			              [] -> "fin"
 			              otherwise -> lecture mem
 		where lecture = action saut (deplacement_droite instB)
+			  valmem = head (right mem)
 
 main = do
 	args <- getArgs
 	action 0 instruction memoire
 	where instruction = Blist { left = [], right = concat args}
-		  memoire = Blist { left = repeat 0, elt = 0, right = repeat 0}
+		  memoire = Blist { left = repeat 0, right = repeat 0}
