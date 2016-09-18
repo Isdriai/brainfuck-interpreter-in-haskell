@@ -19,7 +19,6 @@ update :: Blist t -> t -> Blist t
 update blist elem=
 	Blist { left = left blist, right = elem:tail (right blist)}
 
--- Renvoie un int qui identifiera si il y a une erreur ou pas
 acion :: int -> Blist Char -> Blist Int -> IO () 
 action saut instB mem =
 	if saut > 0 then 
@@ -45,7 +44,7 @@ action saut instB mem =
 			              ']':_ -> if valmem mem =0 
 			              				then action (-1) (deplacement_gauche instB) mem 
 			              				else lecture mem
-			              [] -> "fin"
+			              [] -> putStrLn "fin programme"
 			              otherwise -> lecture mem
 		where lecture = action saut (deplacement_droite instB)
 			  valmem = head (right mem)
