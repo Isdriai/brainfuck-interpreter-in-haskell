@@ -20,7 +20,7 @@ update :: Blist t -> t -> Blist t
 update blist elem=
 	Blist { left = left blist, right = elem:tail (right blist)}
 
-action :: int -> Blist Char -> Blist Int -> IO () 
+action :: Int -> Blist Char -> Blist Int -> IO () 
 action saut instB mem =
 	if saut > 0 then 
 		case right instB of 
@@ -31,7 +31,7 @@ action saut instB mem =
 		case right instB of 
 			']':_ -> action (saut+1) (move_gauche instB) mem
 			'[':_ -> action (saut-1) (move_gauche instB) mem
-			_ -> action (move_gauche instB) mem
+			_ -> action saut (move_gauche instB) mem
 	else
 		case right instB of 
 			'>':_ -> lecture (move_droite mem)
@@ -39,21 +39,20 @@ action saut instB mem =
 			'+':_ -> lecture (update mem ((valmem)+1))
 			'-':_ -> lecture (update mem ((valmem)-1))
 			'.':_ -> do putStrLn (show valmem)
-					lecture mem
-			',':_ -> do arg <- getLine
-						lecture (update meme (read arg :: Int))
+			            lecture mem
+			',':_ -> do getLine >>= \ arg ->
+						lecture (update mem (read arg :: Int))
 			'[':_ -> if valmem == 0 
 							then action 1 (move_droite instB) mem 
 							else lecture mem
-			']':_ -> if valmem mem ==0 
+			']':_ -> if valmem == 0 
 							then action (-1) (move_gauche instB) mem 
 							else lecture mem
-			[] -> putStrLn "fin programme"
+			[] -> do putStrLn "fin programme"
 			_ -> lecture mem
-		where lecture = action saut (move_droite instB)
-			  valmem = head (right mem)
+    	    where lecture = action saut (move_droite instB)
+    	          valmem = head (right mem)
 
-main = do args <- getArgs
-		action 0 instruction 
-		where instruction = Blist { left = [], right = concat args}
-			  memoire = Blist { left = repeat 0, right = repeat 0}
+main = action 0 instruction memoire
+        where instruction = Blist { left = [], right = (concat getArgs)}
+              memoire = Blist { left = repeat 0, right = repeat 0}
